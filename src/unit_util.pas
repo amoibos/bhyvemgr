@@ -56,7 +56,7 @@ function CheckSysctl(Name: String):String;
 function CheckUrl(Url: String):Boolean;
 function CheckUserName(Name: String):Boolean;
 function CheckVmName(Name: String):Boolean;
-function CheckVmRunning(Name: String):Integer;
+function CheckVmRunning(const pName: String):Integer;
 function CheckTpmSocketRunning(Name: String):Integer;
 function CheckZfsDataset(Dataset: String): Boolean;
 function CheckZfsSupport():Boolean;
@@ -1259,21 +1259,24 @@ begin
   RegText.Free
 end;
 
-function CheckVmRunning(Name: String): Integer;
+function CheckVmRunning(const pName: String): Integer;
 var
-  PidNumber : Integer;
+  lPidNumber : Integer;
+  lCmd: String;
 begin
-  Result:=-1;
+  Result := -1;
 
-  PidNumber:=GetPidValue('^'+BhyveCmd+' -k '+VmPath+'/'+Name+'/bhyve_config.conf');
+  lCmd := Format('^%s -k %s/%s/bhyve_config.conf', [BhyveCmd, VmPath, Name]);
+  lPidNumber := GetPidValue(lCmd);
 
-  if PidNumber > 0 then
-    Result:=PidNumber
+  if lPidNumber > 0 then
+    Result := lPidNumber
   else
   begin
-    PidNumber:= GetPidValue('^bhyve: '+Name+'$');
-    if PidNumber  > 0 then
-      Result:=PidNumber;
+    lCmd = Format('^bhyve: %s$', [Name]);
+    lPidNumber := GetPidValue(lCmd);
+    if lPidNumber > 0 then
+      Result := lPidNumber;
   end;
 end;
 
