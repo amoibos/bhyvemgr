@@ -1054,7 +1054,7 @@ begin
 
   extension:=ExtractFileExt(ImageName);
 
-  if extension = '.xz' then
+  if ImageName.tolower().endswith('.xz') then
     Result:=ExtractFileExt(LeftStr(ImageName, Length(ImageName)-Length(ExtractFileExt(ImageName))))+extension
   else
     Result:=ExtractFileExt(ImageName);
