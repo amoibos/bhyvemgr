@@ -348,35 +348,36 @@ begin
   Result:=True;
 
   FilePath:=TStringList.Create;
-
-  DirePath:=VmPath+'/'+VmName+'/pf';
-  ConfigFile:=DirePath+'/'+RulesType+'.rules';
-
-  if not DirectoryExists(DirePath) then
-    CreateDirectory(DirePath, GetCurrentUserName(), '750');
-
   try
-    FilePath.Text:=VmRules;
+    DirePath:=VmPath+'/'+VmName+'/pf';
+    ConfigFile:=DirePath+'/'+RulesType+'.rules';
 
-    if FilePath.Count = 0 then
-    begin
-      if FileExists(ConfigFile) then
+    if not DirectoryExists(DirePath) then
+      CreateDirectory(DirePath, GetCurrentUserName(), '750');
+
+    try
+      FilePath.Text:=VmRules;
+
+      if FilePath.Count = 0 then
       begin
-        RemoveFile(ConfigFile);
+        if FileExists(ConfigFile) then
+        begin
+          RemoveFile(ConfigFile);
+        end;
+      end
+      else
+      begin
+        if not FileExists(ConfigFile) then
+          CreateFile(ConfigFile, GetCurrentUserName(), '660');
+        FilePath.SaveToFile(ConfigFile);
       end;
-    end
-    else
-    begin
-      if not FileExists(ConfigFile) then
-        CreateFile(ConfigFile, GetCurrentUserName(), '660');
-      FilePath.SaveToFile(ConfigFile);
+    except
+      MessageDialog(mtError, Format(error_saving_file, [ConfigFile]));
+      Result:=False;
     end;
-  except
-    MessageDialog(mtError, Format(error_saving_file, [ConfigFile]));
-    Result:=False;
+  finally
+    FilePath.Free;
   end;
-
-  FilePath.Free;
 end;
 
 function PfLoadRules(VmName: String; RulesType: String): Boolean;
