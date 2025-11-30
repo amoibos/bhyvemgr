@@ -2221,7 +2221,7 @@ begin
       Result:=Trim(output).ToInt64
     else
     begin
-      if not (output = EmptyStr) then
+      if not output.IsEmpty  then
         DebugLn('['+FormatDateTime('DD-MM-YYYY HH:NN:SS', Now)+'] : GetPidValue : '+output);
     end;
   end;
@@ -2248,7 +2248,7 @@ begin
       Result:=StrToInt64(trim(output))
     else
     begin
-      if not (output = EmptyStr) then
+      if not output.IsEmpty then
         DebugLn('['+FormatDateTime('DD-MM-YYYY HH:NN:SS', Now)+'] : GetRemoteSize : '+Url+' : '+output);
     end;
   end;
